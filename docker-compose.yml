@@ -28,7 +28,6 @@ services:
       context: ./server
       dockerfile: Dockerfile
       target: production
-    privileged: true
     volumes:
       - ./server:/usr/app
       - /usr/app/node_modules
@@ -38,8 +37,7 @@ services:
       - kafka
     networks:
       - kafka
-    tty: true
-    stdin_open: true
+      - external
 
   worker:
     build:
@@ -59,4 +57,7 @@ services:
 
 networks:
   kafka:
+    driver: bridge
+    internal: true
+  external:
     driver: bridge
