@@ -1,6 +1,10 @@
 {
-  "dependencies": {},
+  "dependencies": {
+    "kafkajs": "^2.2.4"
+  },
   "devDependencies": {
+    "@types/kafkajs": "^1.9.0",
+    "@types/node": "^22.13.4",
     "tsc-watch": "^6.2.1",
     "typescript": "^5.7.3"
   },

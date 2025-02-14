@@ -1,6 +1,22 @@
 {
-  "dependencies": {},
+  "dependencies": {
+    "@prisma/client": "^6.3.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "kafkajs": "^2.2.4",
+    "zod": "^3.24.2"
+  },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.8",
+    "@types/kafkajs": "^1.9.0",
+    "@types/node": "^22.13.4",
+    "prisma": "^6.3.1",
     "tsc-watch": "^6.2.1",
     "typescript": "^5.7.3"
   },
@@ -9,6 +25,7 @@
   "description": "Server to handle requests",
   "main": "dist/app.js",
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "tsc-watch --onSuccess \"node ./dist/app.js\"",
     "start": "node ./dist/app.js",
     "build": "tsc"
