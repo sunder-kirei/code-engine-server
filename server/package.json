@@ -1,5 +1,17 @@
 {
   "dependencies": {
     "typescript": "^5.7.3"
-  }
+  },
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Server to handle requests",
+  "main": "dist/app.js",
+  "devDependencies": {},
+  "scripts": {
+    "dev": "tsc-watch --onSuccess \"node ./dist/app.js\"",
+    "start": "node ./dist/app.js",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC"
 }

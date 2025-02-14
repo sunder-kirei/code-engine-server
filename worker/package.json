@@ -1,5 +1,17 @@
 {
   "dependencies": {
     "typescript": "^5.7.3"
-  }
+  },
+  "name": "worker",
+  "version": "1.0.0",
+  "description": "Worker to execute code from job queue",
+  "main": "dist/app.js",
+  "devDependencies": {},
+  "scripts": {
+    "dev": "tsc-watch --onSuccess \"node ./dist/app.js\"",
+    "start": "node ./dist/app.js",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC"
 }
