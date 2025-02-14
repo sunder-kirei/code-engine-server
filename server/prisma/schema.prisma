@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(auto()) @map("_id") @db.ObjectId
+  email             String             @unique
+  hashedPassword    String
+  salt              String
+  apiKey            String?            @unique
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  ExecutionRequests ExecutionRequest[]
+}
+
+model ExecutionRequest {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  code      Code
+  status    Status   @default(PENDING)
+  output    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+type Code {
+  code     String
+  language Language
+}
+
+enum Language {
+  CPP
+  PYTHON
+  JAVASCRIPT
+  C
+}
+
+enum Status {
+  PENDING
+  COMPILING
+  COMPILED
+  RUNNING
+  SUCCESS
+  COMPILATION_ERROR
+  RUNTIME_ERROR
+}
