@@ -1,8 +1,11 @@
 import { Kafka } from "kafkajs";
 
 export const kafka = new Kafka({
-  clientId: "code-engine-worker",
-  brokers: ["kafka:29092"],
+  clientId: process.env.KAFKA_CLIENT_ID,
+  brokers: [process.env.KAFKA_BROKERS],
+  retry: {
+    retries: 100,
+  },
 });
 
 export const kafkaProducer = kafka.producer();
@@ -18,13 +21,9 @@ export const kafkaConnect = async () => {
     topics: [
       {
         topic: "execute-status-updates",
-        numPartitions: 1,
-        replicationFactor: 1,
       },
       {
         topic: "execute-requests",
-        numPartitions: 1,
-        replicationFactor: 1,
       },
     ],
   });

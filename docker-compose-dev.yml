@@ -20,6 +20,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      KAFKA_NUM_PARTITIONS: 3
     networks:
       - kafka
 
@@ -31,6 +32,9 @@ services:
     volumes:
       - ./server:/usr/app
       - /usr/app/node_modules
+    environment:
+      KAFKA_CLIENT_ID: code-engine-server
+      KAFKA_BROKERS: kafka:29092
     ports:
       - 3000:3000
     depends_on:
@@ -39,7 +43,7 @@ services:
       - kafka
       - external
 
-  worker:
+  worker-1:
     build:
       context: ./worker
       dockerfile: Dockerfile
@@ -48,8 +52,26 @@ services:
     volumes:
       - ./worker:/usr/app
       - /usr/app/node_modules
-    ports:
-      - 4000:4000
+    environment:
+      KAFKA_CLIENT_ID: code-engine-worker-1
+      KAFKA_BROKERS: kafka:29092
+    depends_on:
+      - kafka
+    networks:
+      - kafka
+
+  worker-2:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+      target: development
+    privileged: true
+    volumes:
+      - ./worker:/usr/app
+      - /usr/app/node_modules
+    environment:
+      KAFKA_CLIENT_ID: code-engine-worker-2
+      KAFKA_BROKERS: kafka:29092
     depends_on:
       - kafka
     networks:
