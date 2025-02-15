@@ -31,7 +31,7 @@ export async function startServer(app: Express) {
       }),
     ]);
   } catch (error) {
-    console.log(error);
+    console.error({error});
     await kafkaDisconnect();
     await prismaDisconnect();
     process.exit(1);

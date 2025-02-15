@@ -71,9 +71,9 @@ export async function updateStatus(
   }
 }
 
-export async function getStatus(id: string) {
+export async function getStatus(id: string, userId: string) {
   const executeRequest = await prisma.executionRequest.findUnique({
-    where: { id },
+    where: { id, userId },
     select: {
       id: true,
       createdAt: true,
@@ -97,4 +97,56 @@ export async function getStatus(id: string) {
     message: "Execute request found",
     executeRequest,
   };
+}
+
+export async function getExecutionRequests(
+  userId: string,
+  page: number = 1,
+  limit: number = 10
+) {
+  page = page - 1;
+
+  const executionRequests = await prisma.executionRequest.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      createdAt: true,
+      status: true,
+      output: true,
+      updatedAt: true,
+      code: true,
+    },
+    take: limit,
+    skip: page * limit,
+  });
+
+  if (!executionRequests) {
+    return {
+      success: false,
+      message: "No execution requests found",
+      executionRequests: undefined,
+    };
+  }
+
+  return {
+    success: true,
+    message: "Execution requests found",
+    executionRequests,
+  };
+}
+
+export async function deleteExecuteRequest(id: string, userId: string) {
+  try {
+    await prisma.executionRequest.delete({
+      where: { id, userId },
+    });
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+    };
+  }
 }

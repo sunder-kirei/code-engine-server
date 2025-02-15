@@ -1,10 +1,20 @@
 import { ErrorRequestHandler, Router } from "express";
-import { signUpSchema, loginSchema, executeSchema } from "./schema/zod";
+import {
+  signUpSchema,
+  loginSchema,
+  executeSchema,
+  executionRequestSearchSchema,
+} from "./schema/zod";
 import { login, signUp } from "./controller/auth.controller";
 import { generateJWT, verifyJWT } from "./lib/jwt";
 import { getUser } from "./controller/user.controller";
 import { extractToken } from "./lib/extractToken";
-import { execute, getStatus } from "./controller/execute.controller";
+import {
+  deleteExecuteRequest,
+  execute,
+  getExecutionRequests,
+  getStatus,
+} from "./controller/execute.controller";
 
 export const routes = Router();
 
@@ -79,6 +89,45 @@ routes.get("/user", async (req, res) => {
   }
 
   res.json({ message, success, user });
+});
+
+routes.get("/execute", async (req, res) => {
+  try {
+    const { limit, page } = executionRequestSearchSchema.parse(req.query);
+    const token = extractToken(req);
+    if (!token) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const { success, message, userId } = verifyJWT(token);
+    if (!success) {
+      res.status(401).json({ message });
+      return;
+    }
+
+    const { message: userMessage, success: userSuccess } = await getUser(
+      userId!
+    );
+    if (!userSuccess) {
+      res.status(401).json({ message: userMessage });
+      return;
+    }
+
+    const {
+      message: statusMessage,
+      success: statusSuccess,
+      executionRequests,
+    } = await getExecutionRequests(userId!, page, limit);
+    if (!statusSuccess) {
+      res.status(400).json({ message: statusMessage });
+      return;
+    }
+
+    res.json({ message, success, executionRequests });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 routes.post("/execute", async (req, res) => {
@@ -158,7 +207,7 @@ routes.get("/execute/:id", async (req, res) => {
     message: statusMessage,
     success: statusSuccess,
     executeRequest: executeStatus,
-  } = await getStatus(id);
+  } = await getStatus(id, userId!);
 
   if (!statusSuccess) {
     res.status(400).json({ message: statusMessage });
@@ -166,6 +215,40 @@ routes.get("/execute/:id", async (req, res) => {
   }
 
   res.json({ message, success, executeStatus });
+});
+
+routes.delete("/execute/:id", async (req, res) => {
+  const token = extractToken(req);
+  if (!token) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
+  const { success, message, userId } = verifyJWT(token);
+  if (!success) {
+    res.status(401).json({ message });
+    return;
+  }
+
+  const { message: userMessage, success: userSuccess } = await getUser(userId!);
+  if (!userSuccess) {
+    res.status(401).json({ message: userMessage });
+    return;
+  }
+
+  const { id } = req.params;
+  if (!id) {
+    res.status(400).json({ message: "Invalid id" });
+    return;
+  }
+
+  const { success: statusSuccess } = await deleteExecuteRequest(id, userId!);
+  if (!statusSuccess) {
+    res.status(400).send();
+    return;
+  }
+
+  res.status(204).send();
 });
 
 const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {

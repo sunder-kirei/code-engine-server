@@ -34,3 +34,12 @@ export const executeSchema = z.object({
     .min(1, { message: "Code must be at least 1 character" }),
   language: z.enum(["CPP", "PYTHON", "JAVASCRIPT", "C"]),
 });
+
+export const executionRequestSearchSchema = z.object({
+  page: z.optional(
+    z.number().min(1, { message: "Page must be greater than 0" })
+  ),
+  limit: z.optional(
+    z.number().min(1, { message: "Limit must be greater than 0" })
+  ),
+});
