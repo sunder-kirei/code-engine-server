@@ -8,6 +8,8 @@ WORKDIR /usr/lib/isolate
 RUN apt-get install -y libsystemd-dev build-essential
 RUN make
 RUN make install
+RUN apt install -y python3
+
 WORKDIR /usr/app
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/usr/cache/.npm \
