@@ -46,11 +46,15 @@ export async function execute(
   }
 }
 
-export async function updateStatus(id: string, status: Status) {
+export async function updateStatus(
+  id: string,
+  status: Status,
+  output?: string
+) {
   try {
     await prisma.executionRequest.update({
       where: { id },
-      data: { status },
+      data: { status, output },
     });
 
     return {
