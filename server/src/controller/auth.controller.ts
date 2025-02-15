@@ -2,6 +2,7 @@ import { User } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 
 function generateSalt() {
   return crypto.randomBytes(16).toString("hex");
@@ -50,6 +51,7 @@ export async function signUp(
       email: email,
       hashedPassword: hashedPassword,
       salt: salt,
+      apiKey: uuidv4(),
     },
   });
 

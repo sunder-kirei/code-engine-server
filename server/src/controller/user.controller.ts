@@ -4,7 +4,7 @@ import { prisma } from "../lib/prisma";
 export async function getUser(userId: string): Promise<{
   success: boolean;
   message: string;
-  user?: Pick<User, "id" | "email">;
+  user?: Pick<User, "id" | "email" | "apiKey">;
 }> {
   const user = await prisma.user.findUnique({
     where: {
@@ -13,6 +13,7 @@ export async function getUser(userId: string): Promise<{
     select: {
       id: true,
       email: true,
+      apiKey: true,
     },
   });
 

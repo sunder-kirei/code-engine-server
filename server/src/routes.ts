@@ -15,6 +15,7 @@ import {
   getExecutionRequests,
   getStatus,
 } from "./controller/execute.controller";
+import { extractApiKey } from "./lib/extractApiKey";
 
 export const routes = Router();
 
@@ -94,23 +95,10 @@ routes.get("/user", async (req, res) => {
 routes.get("/execute", async (req, res) => {
   try {
     const { limit, page } = executionRequestSearchSchema.parse(req.query);
-    const token = extractToken(req);
-    if (!token) {
+
+    const apiKey = await extractApiKey(req);
+    if (!apiKey) {
       res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
-
-    const { success, message, userId } = verifyJWT(token);
-    if (!success) {
-      res.status(401).json({ message });
-      return;
-    }
-
-    const { message: userMessage, success: userSuccess } = await getUser(
-      userId!
-    );
-    if (!userSuccess) {
-      res.status(401).json({ message: userMessage });
       return;
     }
 
@@ -118,13 +106,13 @@ routes.get("/execute", async (req, res) => {
       message: statusMessage,
       success: statusSuccess,
       executionRequests,
-    } = await getExecutionRequests(userId!, page, limit);
+    } = await getExecutionRequests(apiKey.id, page, limit);
     if (!statusSuccess) {
       res.status(400).json({ message: statusMessage });
       return;
     }
 
-    res.json({ message, success, executionRequests });
+    res.json({ statusMessage, statusSuccess, executionRequests });
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }
@@ -134,26 +122,9 @@ routes.post("/execute", async (req, res) => {
   try {
     const { code, language } = executeSchema.parse(req.body);
 
-    const token = extractToken(req);
-    if (!token) {
+    const apiKey = await extractApiKey(req);
+    if (!apiKey) {
       res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
-
-    const { success, message, userId } = verifyJWT(token);
-    if (!success) {
-      res.status(401).json({ message });
-      return;
-    }
-
-    const {
-      message: userMessage,
-      success: userSuccess,
-      user,
-    } = await getUser(userId!);
-
-    if (!userSuccess) {
-      res.status(401).json({ message: userMessage });
       return;
     }
 
@@ -161,7 +132,7 @@ routes.post("/execute", async (req, res) => {
       executeRequest: executeStatus,
       message: executeMessage,
       success: executeSuccess,
-    } = await execute(code, language, user!);
+    } = await execute(code, language, { id: apiKey.id, email: apiKey.email });
 
     if (!executeSuccess) {
       res.status(400).json({ message: executeMessage });
@@ -179,26 +150,9 @@ routes.post("/execute", async (req, res) => {
 });
 
 routes.get("/execute/:id", async (req, res) => {
-  const token = extractToken(req);
-  if (!token) {
+  const apiKey = await extractApiKey(req);
+  if (!apiKey) {
     res.status(401).json({ message: "Unauthorized" });
-    return;
-  }
-
-  const { success, message, userId } = verifyJWT(token);
-  if (!success) {
-    res.status(401).json({ message });
-    return;
-  }
-
-  const {
-    message: userMessage,
-    success: userSuccess,
-    user,
-  } = await getUser(userId!);
-
-  if (!userSuccess) {
-    res.status(401).json({ message: userMessage });
     return;
   }
 
@@ -207,32 +161,20 @@ routes.get("/execute/:id", async (req, res) => {
     message: statusMessage,
     success: statusSuccess,
     executeRequest: executeStatus,
-  } = await getStatus(id, userId!);
+  } = await getStatus(id, apiKey.id);
 
   if (!statusSuccess) {
     res.status(400).json({ message: statusMessage });
     return;
   }
 
-  res.json({ message, success, executeStatus });
+  res.json({ statusMessage, statusSuccess, executeStatus });
 });
 
 routes.delete("/execute/:id", async (req, res) => {
-  const token = extractToken(req);
-  if (!token) {
+  const apiKey = await extractApiKey(req);
+  if (!apiKey) {
     res.status(401).json({ message: "Unauthorized" });
-    return;
-  }
-
-  const { success, message, userId } = verifyJWT(token);
-  if (!success) {
-    res.status(401).json({ message });
-    return;
-  }
-
-  const { message: userMessage, success: userSuccess } = await getUser(userId!);
-  if (!userSuccess) {
-    res.status(401).json({ message: userMessage });
     return;
   }
 
@@ -242,7 +184,7 @@ routes.delete("/execute/:id", async (req, res) => {
     return;
   }
 
-  const { success: statusSuccess } = await deleteExecuteRequest(id, userId!);
+  const { success: statusSuccess } = await deleteExecuteRequest(id, apiKey.id);
   if (!statusSuccess) {
     res.status(400).send();
     return;
