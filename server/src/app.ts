@@ -17,14 +17,7 @@ app.use(cookieParser());
 
 app.use("/api", routes);
 
-try {
-  startServer(app);
-} catch (error) {
-  process.exit(1);
-} finally {
-  prismaDisconnect();
-  kafkaDisconnect();
-}
+startServer(app);
 
 process.on("SIGINT", async () => {
   await prismaDisconnect();

@@ -1,31 +1,39 @@
 import { Status } from "@prisma/client";
-import { kafkaConnect, kafkaConsumer } from "./kafka";
-import { prismaConnect } from "./prisma";
+import { kafkaConnect, kafkaConsumer, kafkaDisconnect } from "./kafka";
+import { prismaConnect, prismaDisconnect } from "./prisma";
 import { Express } from "express";
 import { updateStatus } from "../controller/execute.controller";
 
 export async function startServer(app: Express) {
-  await prismaConnect();
-  await kafkaConnect();
+  try {
+    await prismaConnect();
+    await kafkaConnect();
 
-  await kafkaConsumer.run({
-    eachMessage: async ({ message }) => {
-      const { value } = message;
+    await Promise.all([
+      kafkaConsumer.run({
+        eachMessage: async ({ message }) => {
+          const { value } = message;
 
-      if (!value) return;
-      const {
-        id,
-        status,
-        output,
-      }: { id: string; status: Status; output?: string } = JSON.parse(
-        value.toString()
-      );
-      await updateStatus(id, status, output);
-    },
-    autoCommitInterval: 1000,
-  });
+          if (!value) return;
+          const {
+            id,
+            status,
+            output,
+          }: { id: string; status: Status; output?: string } = JSON.parse(
+            value.toString()
+          );
+          await updateStatus(id, status, output);
+        },
+      }),
 
-  app.listen(3000, () => {
-    console.log("Server is running on port 3000");
-  });
+      app.listen(3000, () => {
+        console.log("Server is running on port 3000");
+      }),
+    ]);
+  } catch (error) {
+    console.log(error);
+    await kafkaDisconnect();
+    await prismaDisconnect();
+    process.exit(1);
+  }
 }
