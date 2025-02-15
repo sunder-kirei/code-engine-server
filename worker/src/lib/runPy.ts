@@ -1,11 +1,11 @@
-import { exec, execSync } from "child_process";
+import { exec } from "child_process";
 import { readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { Message } from "../types/Message";
 import { Status } from "../types/Status";
 import { kafkaProducer } from "./kafka";
 
-export async function runCpp({ code, id, language }: Message) {
+export async function runPy({ code, id, language }: Message) {
   const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
     // Compiling code start
     await kafkaProducer.send({
@@ -15,8 +15,8 @@ export async function runCpp({ code, id, language }: Message) {
           key: id,
           value: JSON.stringify({
             id,
-            status: Status.COMPILING,
-            output: "Compiling code...",
+            status: Status.RUNNING,
+            output: "Code does not need compilation...",
           }),
         },
       ],
@@ -32,7 +32,7 @@ export async function runCpp({ code, id, language }: Message) {
               key: id,
               value: JSON.stringify({
                 id,
-                status: Status.COMPILATION_ERROR,
+                status: Status.RUNTIME_ERROR,
                 output: error.message,
               }),
             },
@@ -42,10 +42,10 @@ export async function runCpp({ code, id, language }: Message) {
       }
 
       const boxPath = path.join(stdout.trim(), "box");
-      writeFileSync(path.join(boxPath, "main.cpp"), code);
+      writeFileSync(path.join(boxPath, "main.py"), code);
 
       exec(
-        `isolate --processes --full-env --stderr=stderr.txt --run /usr/bin/g++ -- main.cpp -o a.out`,
+        `isolate --stderr=stderr.txt --stdout=stdout.txt --run /usr/bin/python3 main.py`,
         async (error) => {
           if (error) {
             const stderr = readFileSync(
@@ -59,7 +59,7 @@ export async function runCpp({ code, id, language }: Message) {
                   key: id,
                   value: JSON.stringify({
                     id,
-                    status: Status.COMPILATION_ERROR,
+                    status: Status.RUNTIME_ERROR,
                     output: stderr,
                   }),
                 },
@@ -67,6 +67,11 @@ export async function runCpp({ code, id, language }: Message) {
             });
             return resolve(false);
           }
+
+          const stdout = readFileSync(
+            path.join(boxPath, "stdout.txt")
+          ).toString();
+
           await kafkaProducer.send({
             topic: "execute-status-updates",
             messages: [
@@ -74,57 +79,13 @@ export async function runCpp({ code, id, language }: Message) {
                 key: id,
                 value: JSON.stringify({
                   id,
-                  status: Status.RUNNING,
-                  output: "Running code...",
+                  status: Status.SUCCESS,
+                  output: stdout,
                 }),
               },
             ],
           });
-
-          exec(
-            `isolate --stderr=stderr.txt --stdout=stdout.txt --run a.out`,
-            async (error) => {
-              if (error) {
-                const stderr = readFileSync(
-                  path.join(boxPath, "stderr.txt")
-                ).toString();
-
-                await kafkaProducer.send({
-                  topic: "execute-status-updates",
-                  messages: [
-                    {
-                      key: id,
-                      value: JSON.stringify({
-                        id,
-                        status: Status.RUNTIME_ERROR,
-                        output: stderr,
-                      }),
-                    },
-                  ],
-                });
-                return resolve(false);
-              }
-
-              const stdout = readFileSync(
-                path.join(boxPath, "stdout.txt")
-              ).toString();
-
-              await kafkaProducer.send({
-                topic: "execute-status-updates",
-                messages: [
-                  {
-                    key: id,
-                    value: JSON.stringify({
-                      id,
-                      status: Status.SUCCESS,
-                      output: stdout,
-                    }),
-                  },
-                ],
-              });
-              return resolve(true);
-            }
-          );
+          return resolve(true);
         }
       );
     });

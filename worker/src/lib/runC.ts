@@ -5,7 +5,7 @@ import { Message } from "../types/Message";
 import { Status } from "../types/Status";
 import { kafkaProducer } from "./kafka";
 
-export async function runCpp({ code, id, language }: Message) {
+export async function runC({ code, id, language }: Message) {
   const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
     // Compiling code start
     await kafkaProducer.send({
@@ -38,14 +38,14 @@ export async function runCpp({ code, id, language }: Message) {
             },
           ],
         });
-        return resolve(false);
+        resolve(false);
       }
 
       const boxPath = path.join(stdout.trim(), "box");
-      writeFileSync(path.join(boxPath, "main.cpp"), code);
+      writeFileSync(path.join(boxPath, "main.c"), code);
 
       exec(
-        `isolate --processes --full-env --stderr=stderr.txt --run /usr/bin/g++ -- main.cpp -o a.out`,
+        `isolate --processes --full-env --stderr=stderr.txt --run /usr/bin/gcc -- main.c -o a.out`,
         async (error) => {
           if (error) {
             const stderr = readFileSync(
@@ -65,7 +65,7 @@ export async function runCpp({ code, id, language }: Message) {
                 },
               ],
             });
-            return resolve(false);
+            resolve(false);
           }
           await kafkaProducer.send({
             topic: "execute-status-updates",
@@ -102,7 +102,7 @@ export async function runCpp({ code, id, language }: Message) {
                     },
                   ],
                 });
-                return resolve(false);
+                resolve(false);
               }
 
               const stdout = readFileSync(
@@ -122,7 +122,7 @@ export async function runCpp({ code, id, language }: Message) {
                   },
                 ],
               });
-              return resolve(true);
+              resolve(true);
             }
           );
         }
