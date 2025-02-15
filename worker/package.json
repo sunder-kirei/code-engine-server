@@ -1,8 +1,10 @@
 {
   "dependencies": {
+    "dotenv": "^16.4.7",
     "kafkajs": "^2.2.4"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.3",
     "@types/kafkajs": "^1.9.0",
     "@types/node": "^22.13.4",
     "tsc-watch": "^6.2.1",
