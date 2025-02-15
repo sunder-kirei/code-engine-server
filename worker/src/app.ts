@@ -23,20 +23,9 @@ export async function startWorker() {
         value.toString()
       );
 
-      await kafkaProducer.send({
-        topic: "execute-status-updates",
-        messages: [
-          {
-            key: id,
-            value: JSON.stringify({
-              id,
-              status: Status.COMPILING,
-            }),
-          },
-        ],
-      });
       await runCpp({ code, id, language });
     },
+    autoCommitInterval: 1000,
   });
 }
 

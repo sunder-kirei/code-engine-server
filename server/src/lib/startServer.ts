@@ -13,11 +13,16 @@ export async function startServer(app: Express) {
       const { value } = message;
 
       if (!value) return;
-      const { id, status }: { id: string; status: Status } = JSON.parse(
+      const {
+        id,
+        status,
+        output,
+      }: { id: string; status: Status; output?: string } = JSON.parse(
         value.toString()
       );
-      await updateStatus(id, status);
+      await updateStatus(id, status, output);
     },
+    autoCommitInterval: 1000,
   });
 
   app.listen(3000, () => {
