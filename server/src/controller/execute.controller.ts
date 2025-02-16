@@ -8,7 +8,14 @@ export async function execute(
   user: Pick<User, "id" | "email">
 ) {
   try {
-    const { id, createdAt, status } = await prisma.executionRequest.create({
+    const {
+      id,
+      createdAt,
+      output,
+      updatedAt,
+      status,
+      code: uplaodedCode,
+    } = await prisma.executionRequest.create({
       data: {
         userId: user.id,
         code: {
@@ -35,7 +42,14 @@ export async function execute(
     return {
       success: true,
       message: "Execute request created successfully",
-      executeRequest: { id, createdAt, status },
+      executeRequest: {
+        id,
+        createdAt,
+        status,
+        output,
+        updatedAt,
+        code: uplaodedCode,
+      },
     };
   } catch (error) {
     return {
