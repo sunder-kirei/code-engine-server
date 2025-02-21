@@ -39,9 +39,6 @@ services:
       context: ./server
       dockerfile: Dockerfile
       target: production
-    volumes:
-      - ./server:/usr/app
-      - /usr/app/node_modules
     environment:
       KAFKA_CLIENT_ID: code-engine-server
       KAFKA_BROKERS: kafka:29092
@@ -61,9 +58,6 @@ services:
       dockerfile: Dockerfile
       target: production
     privileged: true
-    volumes:
-      - ./worker:/usr/app
-      - /usr/app/node_modules
     environment:
       KAFKA_CLIENT_ID: code-engine-worker-1
       KAFKA_BROKERS: kafka:29092
@@ -79,9 +73,6 @@ services:
       dockerfile: Dockerfile
       target: production
     privileged: true
-    volumes:
-      - ./worker:/usr/app
-      - /usr/app/node_modules
     environment:
       KAFKA_CLIENT_ID: code-engine-worker-2
       KAFKA_BROKERS: kafka:29092
