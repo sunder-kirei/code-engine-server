@@ -1,6 +1,7 @@
 import { Language, Status, User } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 import { kafkaProducer } from "../lib/kafka";
+import { client } from "../lib/redis";
 
 export async function execute(
   code: string,
@@ -14,7 +15,7 @@ export async function execute(
       output,
       updatedAt,
       status,
-      code: uplaodedCode,
+      code: uploadedCode,
     } = await prisma.executionRequest.create({
       data: {
         userId: user.id,
@@ -24,6 +25,18 @@ export async function execute(
         },
       },
     });
+
+    await client.set(
+      id,
+      JSON.stringify({
+        id,
+        createdAt,
+        status,
+        output,
+        updatedAt,
+        code: uploadedCode,
+      })
+    );
 
     await kafkaProducer.send({
       topic: "execute-requests",
@@ -48,7 +61,7 @@ export async function execute(
         status,
         output,
         updatedAt,
-        code: uplaodedCode,
+        code: uploadedCode,
       },
     };
   } catch (error) {
@@ -66,10 +79,26 @@ export async function updateStatus(
   output?: string
 ) {
   try {
-    await prisma.executionRequest.update({
+    const {
+      createdAt,
+      updatedAt,
+      code: uploadedCode,
+    } = await prisma.executionRequest.update({
       where: { id },
       data: { status, output },
     });
+
+    await client.set(
+      id,
+      JSON.stringify({
+        id,
+        createdAt,
+        status,
+        output,
+        updatedAt,
+        code: uploadedCode,
+      })
+    );
 
     return {
       success: true,
@@ -86,6 +115,15 @@ export async function updateStatus(
 }
 
 export async function getStatus(id: string, userId: string) {
+  const value = await client.get(id);
+  if (value) {
+    return {
+      success: true,
+      message: "Execute request found",
+      executeRequest: JSON.parse(value),
+    };
+  }
+
   const executeRequest = await prisma.executionRequest.findUnique({
     where: { id, userId },
     select: {

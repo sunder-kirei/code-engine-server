@@ -6,6 +6,7 @@ import { prismaDisconnect } from "./lib/prisma";
 import { startServer } from "./lib/startServer";
 import { kafkaDisconnect } from "./lib/kafka";
 import { config } from "dotenv";
+import { redisDisconnect } from "./lib/redis";
 
 config();
 const app = express();
@@ -22,5 +23,6 @@ startServer(app);
 process.on("SIGINT", async () => {
   await prismaDisconnect();
   await kafkaDisconnect();
+  await redisDisconnect();
   process.exit(0);
 });

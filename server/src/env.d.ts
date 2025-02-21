@@ -10,6 +10,7 @@ declare global {
       JWT_SECRET: string;
       KAFKA_CLIENT_ID: string;
       KAFKA_BROKERS: string;
+      REDIS_URL: string;
     }
   }
 }

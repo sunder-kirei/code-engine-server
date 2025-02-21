@@ -3,11 +3,13 @@ import { kafkaConnect, kafkaConsumer, kafkaDisconnect } from "./kafka";
 import { prismaConnect, prismaDisconnect } from "./prisma";
 import { Express } from "express";
 import { updateStatus } from "../controller/execute.controller";
+import { redisConnect } from "./redis";
 
 export async function startServer(app: Express) {
   try {
     await prismaConnect();
     await kafkaConnect();
+    await redisConnect();
 
     await Promise.all([
       kafkaConsumer.run({
@@ -31,7 +33,7 @@ export async function startServer(app: Express) {
       }),
     ]);
   } catch (error) {
-    console.error({error});
+    console.error({ error });
     await kafkaDisconnect();
     await prismaDisconnect();
     process.exit(1);
