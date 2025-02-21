@@ -16,13 +16,14 @@ services:
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_NODE_ID: 1
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
-      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       KAFKA_NUM_PARTITIONS: 3
     networks:
-      - kafka
+      - kafka-server
+      - kafka-worker
 
   server:
     build:
@@ -40,7 +41,7 @@ services:
     depends_on:
       - kafka
     networks:
-      - kafka
+      - kafka-server
       - external
 
   worker-1:
@@ -58,13 +59,13 @@ services:
     depends_on:
       - kafka
     networks:
-      - kafka
+      - kafka-worker
 
   worker-2:
     build:
       context: ./worker
       dockerfile: Dockerfile
-      target: development
+      target: production
     privileged: true
     volumes:
       - ./worker:/usr/app
@@ -75,10 +76,13 @@ services:
     depends_on:
       - kafka
     networks:
-      - kafka
+      - kafka-worker
 
 networks:
-  kafka:
+  kafka-server:
+    driver: bridge
+    internal: true
+  kafka-worker:
     driver: bridge
     internal: true
   external:
