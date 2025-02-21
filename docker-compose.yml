@@ -71,6 +71,7 @@ services:
       - kafka
     networks:
       - kafka-worker
+    restart: unless-stopped
 
   worker-2:
     build:
@@ -88,6 +89,7 @@ services:
       - kafka
     networks:
       - kafka-worker
+    restart: unless-stopped
 
 networks:
   kafka-server:
