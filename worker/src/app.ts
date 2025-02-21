@@ -16,6 +16,7 @@ export async function startWorker() {
       eachMessage: async ({ message }) => {
         const { value } = message;
         if (!value) return;
+
         const {
           id,
           code,

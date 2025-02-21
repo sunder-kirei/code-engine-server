@@ -45,7 +45,7 @@ services:
     environment:
       KAFKA_CLIENT_ID: code-engine-server
       KAFKA_BROKERS: kafka:29092
-      REDIS_URL: redis:6379
+      REDIS_URL: redis://redis:6379
     ports:
       - 8080:3000
     depends_on:
@@ -69,8 +69,6 @@ services:
       KAFKA_BROKERS: kafka:29092
     depends_on:
       - kafka
-      - redis
-      - server
     networks:
       - kafka-worker
 
@@ -88,8 +86,6 @@ services:
       KAFKA_BROKERS: kafka:29092
     depends_on:
       - kafka
-      - redis
-      - server
     networks:
       - kafka-worker
 
