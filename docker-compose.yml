@@ -67,21 +67,6 @@ services:
       - kafka-worker
     restart: unless-stopped
 
-  worker-2:
-    build:
-      context: ./worker
-      dockerfile: Dockerfile
-      target: production
-    privileged: true
-    environment:
-      KAFKA_CLIENT_ID: code-engine-worker-2
-      KAFKA_BROKERS: kafka:29092
-    depends_on:
-      - kafka
-    networks:
-      - kafka-worker
-    restart: unless-stopped
-
 networks:
   kafka-server:
     driver: bridge
