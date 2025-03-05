@@ -32,9 +32,9 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -var "DATABASE_URL=${{ secrets.DATABASE_URL }}"\
-          -var "CRYPTO_ITERATIONS=${{ secrets.CRYPTO_ITERATIONS }}"\
-          -var "CRYPTO_KEYLEN=${{ secrets.CRYPTO_KEYLEN }}"\
+        run: terraform plan -var "DATABASE_URL=${{ secrets.DATABASE_URL }}"
+          -var "CRYPTO_ITERATIONS=${{ secrets.CRYPTO_ITERATIONS }}"
+          -var "CRYPTO_KEYLEN=${{ secrets.CRYPTO_KEYLEN }}"
           -var "JWT_SECRET=${{ secrets.JWT_SECRET }}"
 
       - name: Terraform Apply
