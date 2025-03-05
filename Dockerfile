@@ -64,7 +64,7 @@ WORKDIR /usr/app/server
 COPY server/package.json server/package-lock.json server/prisma ./
 RUN --mount=type=cache,target=/usr/cache/.npm \
     npm set cache /usr/cache/.npm
-EXPOSE 3000
+EXPOSE 80
 
 ENV KAFKA_CLIENT_ID=code-engine-server
 ENV KAFKA_BROKERS=localhost:9092
