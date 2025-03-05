@@ -21,7 +21,20 @@ RUN npm install
 COPY . .
 CMD npm run dev
 
-FROM base AS production
+FROM node:20.17.0-slim AS production
+
+WORKDIR /usr/app
+COPY package.json package-lock.json ./
+
+# Binary
+COPY --from=base /usr/local/bin/isolate /usr/local/bin/isolate
+# Config
+COPY --from=base /usr/local/etc/isolate /usr/local/etc/isolate
+# Box
+COPY --from=base /var/local/lib/isolate /var/local/lib/isolate
+RUN apt-get update
+RUN apt-get install -y libcap-dev build-essential
+RUN apt install -y python3
 
 RUN npm install
 COPY . .
