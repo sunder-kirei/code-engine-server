@@ -1,6 +1,8 @@
-FROM node:20.17.0 AS base
+FROM node:20.17.0-slim AS base
 
 WORKDIR /usr/app
+RUN apt-get update
+RUN apt-get install -y libssl-dev
 COPY package.json package-lock.json prisma ./
 RUN --mount=type=cache,target=/usr/cache/.npm \
     npm set cache /usr/cache/.npm
