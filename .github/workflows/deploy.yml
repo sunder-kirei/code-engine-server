@@ -43,7 +43,7 @@ jobs:
       - name: Terraform Apply
         id: apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
+        run:
           terraform apply -auto-approve -var "DATABASE_URL=${{ secrets.DATABASE_URL }}"
           -var "CRYPTO_ITERATIONS=${{ secrets.CRYPTO_ITERATIONS }}"
           -var "CRYPTO_KEYLEN=${{ secrets.CRYPTO_KEYLEN }}"
