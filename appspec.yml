@@ -1,0 +1,14 @@
+version: 1.0
+os: linux
+files:
+  - source: /
+    destination: /usr/app
+hooks:
+  BeforeInstall:
+    - location: scripts/stop-compose.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/build-and-deploy.sh
+      timeout: 300
+      runas: root

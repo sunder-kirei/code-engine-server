@@ -20,14 +20,10 @@ groupadd docker
 usermod -aG docker ubuntu
 newgrp docker
 
-mkdir -p /usr/app
-cd /usr/app
-git clone https://github.com/sunder-kirei/code-engine-server
-cd code-engine-server
+mkdir -p /usr/app/
+cd /usr/app/
 
-echo CRYPTO_ITERATIONS=${CRYPTO_ITERATIONS} >> ./server/.env
-echo CRYPTO_KEYLEN=${CRYPTO_KEYLEN} >> ./server/.env
-echo JWT_SECRET="${JWT_SECRET}" >> ./server/.env
-echo DATABASE_URL="${DATABASE_URL}" >> ./server/.env
-
-docker compose up -d
+echo CRYPTO_ITERATIONS=${CRYPTO_ITERATIONS} >> ./.env
+echo CRYPTO_KEYLEN=${CRYPTO_KEYLEN} >> ./.env
+echo JWT_SECRET="${JWT_SECRET}" >> ./.env
+echo DATABASE_URL="${DATABASE_URL}" >> ./.env
