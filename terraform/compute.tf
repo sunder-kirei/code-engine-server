@@ -1,5 +1,5 @@
 resource "aws_instance" "code-engine-server_instance" {
-  ami                         = "ami-00bb6a80f01f03502"
+  ami                         = "ami-0e1bed4f06a3b463d"
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.code-engine-server_subnet.id
   vpc_security_group_ids      = [aws_security_group.code-engine-server_security_group.id]
