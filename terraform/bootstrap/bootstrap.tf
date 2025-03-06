@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform-state-storage" {
-  bucket = "terraform-state-storage-code-engine-server"
+  bucket = "code-engine-server-terraform-state"
 }
 
 resource "aws_s3_bucket_versioning" "terraform-state-storage_versioning" {
