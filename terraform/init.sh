@@ -20,6 +20,14 @@ groupadd docker
 usermod -aG docker ubuntu
 newgrp docker
 
+apt install -y ruby-full
+apt install -y wget
+cd /home/ubuntu
+wget https://aws-codedeploy-ap-south-1.s3.ap-south-1.amazonaws.com/latest/install
+chmod +x ./install
+./install auto
+systemctl start codedeploy-agent
+
 mkdir -p /usr/app/
 cd /usr/app/
 

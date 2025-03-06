@@ -1,6 +1,5 @@
 data "aws_iam_policy" "code-engine-server_codedeploy_policy" {
-  name = "code-engine-server_codedeploy_policy"
-  arn  = "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+  arn = "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
 
   tags = {
     Name = "code-engine-server_codedeploy_policy"
