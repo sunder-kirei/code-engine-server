@@ -10,8 +10,7 @@ resource "aws_subnet" "code-engine-server_subnet" {
   vpc_id                  = aws_vpc.code-engine-server_vpc.id
   cidr_block              = "10.0.0.0/24"
   map_public_ip_on_launch = true
-  availability_zone       = "ap-south-1b"
-
+  depends_on              = [aws_vpc.code-engine-server_vpc]
   tags = {
     Name = "code-engine-server_subnet"
   }
@@ -19,7 +18,6 @@ resource "aws_subnet" "code-engine-server_subnet" {
 
 resource "aws_internet_gateway" "code-engine-server_internet_gateway" {
   vpc_id = aws_vpc.code-engine-server_vpc.id
-
   tags = {
     Name = "code-engine-server_internet_gateway"
   }

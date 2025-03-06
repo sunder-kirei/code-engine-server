@@ -23,7 +23,7 @@ newgrp docker
 apt install -y ruby-full
 apt install -y wget
 cd /home/ubuntu
-wget https://aws-codedeploy-ap-south-1.s3.ap-south-1.amazonaws.com/latest/install
+wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
 chmod +x ./install
 ./install auto
 systemctl start codedeploy-agent

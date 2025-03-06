@@ -1,5 +1,5 @@
 resource "aws_instance" "code-engine-server_instance" {
-  ami                         = "ami-00bb6a80f01f03502"
+  ami                         = "ami-05b10e08d247fb927"
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.code-engine-server_subnet.id
   vpc_security_group_ids      = [aws_security_group.code-engine-server_security_group.id]
@@ -13,7 +13,6 @@ resource "aws_instance" "code-engine-server_instance" {
     JWT_SECRET        = var.JWT_SECRET
   })}")
 
-  availability_zone = "ap-south-1a"
 
   depends_on = [
     aws_internet_gateway.code-engine-server_internet_gateway,
