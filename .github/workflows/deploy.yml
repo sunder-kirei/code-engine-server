@@ -3,7 +3,7 @@ name: Deploy to AWS
 on:
   push:
     branches:
-      - main
+      - aws_codedeploy
 
 jobs:
   terraform:
