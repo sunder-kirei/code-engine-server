@@ -20,7 +20,7 @@ resource "aws_instance" "code-engine-server_instance" {
     aws_route_table_association.code-engine-server_route_table_association,
     aws_security_group.code-engine-server_security_group,
     aws_subnet.code-engine-server_subnet,
-    aws_vpc.code-engine-server_vpc
+    aws_vpc.code-engine-server_vpc,
   ]
   tags = {
     Name = "code-engine-server_instance"
