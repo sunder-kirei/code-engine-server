@@ -1,3 +1,3 @@
 #!/bin/bash
-cd /usr/app/code-engine-server
+cd /usr/app/
 docker compose up --build -d
