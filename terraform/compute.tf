@@ -12,8 +12,6 @@ resource "aws_instance" "code-engine-server_instance" {
     JWT_SECRET        = var.JWT_SECRET
   })}")
 
-  availability_zone = "us-east-1"
-
   depends_on = [
     aws_internet_gateway.code-engine-server_internet_gateway,
     aws_route_table.code-engine-server_route_table,
