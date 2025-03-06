@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket       = "terraform-state-storage-code-engine-server"
     key          = "terraform.tfstate"
-    region       = "ap-south-1"
+    region       = "us-east-1"
     use_lockfile = true
     encrypt      = true
   }
@@ -16,5 +16,5 @@ terraform {
 }
 
 provider "aws" {
-  region = "ap-south-1"
+  region = "us-east-1"
 }

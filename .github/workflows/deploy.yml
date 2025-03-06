@@ -33,6 +33,11 @@ jobs:
         id: init
         run: terraform init
 
+      - name: Terraform Destroy old deployment
+        id: destroy
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform destroy -auto-approve
+
       - name: Terraform Plan
         id: plan
         run: terraform plan -var "DATABASE_URL=${{ secrets.DATABASE_URL }}"
