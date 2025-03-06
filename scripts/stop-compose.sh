@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd /usr/app/
-docker compose down
-docker rmi -f $(docker images -aq)
+sudo docker compose down
+sudo docker rmi -f $(docker images -aq)
