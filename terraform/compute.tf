@@ -4,6 +4,7 @@ resource "aws_instance" "code-engine-server_instance" {
   subnet_id                   = aws_subnet.code-engine-server_subnet.id
   vpc_security_group_ids      = [aws_security_group.code-engine-server_security_group.id]
   associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.code-engine-server_codedeploy_ec2_instance_profile.name
 
   user_data_base64 = base64encode("${templatefile("init.sh", {
     DATABASE_URL      = var.DATABASE_URL,
@@ -21,6 +22,9 @@ resource "aws_instance" "code-engine-server_instance" {
     aws_security_group.code-engine-server_security_group,
     aws_subnet.code-engine-server_subnet,
     aws_vpc.code-engine-server_vpc,
+    aws_iam_instance_profile.code-engine-server_codedeploy_ec2_instance_profile,
+    aws_iam_role.code-engine-server_codedeploy_ec2_role,
+    aws_iam_role_policy_attachment.code-engine-server_codedeploy_ec2_role_policy_attachment,
   ]
   tags = {
     Name = "code-engine-server_instance"

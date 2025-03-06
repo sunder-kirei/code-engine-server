@@ -1,10 +1,10 @@
-version: 1.0
+version: 0.0
 os: linux
 files:
   - source: /
     destination: /usr/app
 hooks:
-  BeforeInstall:
+  ApplicationStop:
     - location: scripts/stop-compose.sh
       timeout: 300
       runas: root
