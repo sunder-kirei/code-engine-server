@@ -130,3 +130,9 @@ This project is licensed under the [MIT License](LICENSE).
 ### 💬 **Contact**
 
 - **Sunder Kumar** – [LinkedIn](https://www.linkedin.com/in/sunder-kirei/) • [GitHub](https://github.com/sunder-kirei)
+
+---
+
+### Medium Article
+
+[Building a Scalable Online Code Execution Engine with Kafka and ioi/isolate](https://medium.com/@sunder-kirei/building-a-scalable-online-code-execution-engine-with-kafka-and-ioi-isolate-c2a364b09abe)

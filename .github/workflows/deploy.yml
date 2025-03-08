@@ -37,7 +37,7 @@ jobs:
         id: destroy
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run:
-          terraform destroy -auto-approve -var "DATABASE_URL=${{ secrets.DATABASE_URL }}"
+          terraform destroy --target aws_instance.code-engine-server_instance -auto-approve -var "DATABASE_URL=${{ secrets.DATABASE_URL }}"
           -var "CRYPTO_ITERATIONS=${{ secrets.CRYPTO_ITERATIONS }}"
           -var "CRYPTO_KEYLEN=${{ secrets.CRYPTO_KEYLEN }}"
           -var "JWT_SECRET=${{ secrets.JWT_SECRET }}"

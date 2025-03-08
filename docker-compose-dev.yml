@@ -73,23 +73,6 @@ services:
     networks:
       - kafka-worker
 
-  worker-2:
-    build:
-      context: ./worker
-      dockerfile: Dockerfile
-      target: development
-    privileged: true
-    volumes:
-      - ./worker:/usr/app
-      - /usr/app/node_modules
-    environment:
-      KAFKA_CLIENT_ID: code-engine-worker-2
-      KAFKA_BROKERS: kafka:29092
-    depends_on:
-      - kafka
-    networks:
-      - kafka-worker
-
 networks:
   kafka-server:
     driver: bridge
